@@ -21,6 +21,12 @@
         "commands": [{
             "command": "mx.plugin",
             "title": "MX"
+        },{
+            "command": "MX_JumpToHtml",
+            "title": "跳转至html"
+        },{
+            "command": "MX_JumpToJTS",
+            "title": "跳转至js/ts"
         }],
         "keybindings": [{
             "command": "mx.plugin",
@@ -31,9 +37,18 @@
         "menus": {
             "editor/context": [{
                 "when": "resourceLangId ==  typescript",
-                "command": "mx.plugin",
-                "group": "mx"
+                "command": "MX_JumpToHtml",
+                "group": "0_mx"
+            },{
+                "when": "resourceLangId ==  javascript",
+                "command": "MX_JumpToHtml",
+                "group": "0_mx"
+            },{
+                "when": "resourceLangId ==  html",
+                "command": "MX_JumpToJTS",
+                "group": "0_mx"
             }]
+            
         }
     },
     "scripts": {

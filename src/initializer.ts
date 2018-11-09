@@ -4,4 +4,7 @@ export class Initializer{
    test(params:string) {
     commands.getCommands(true);
   }
+  init(){
+
+  }
 }
