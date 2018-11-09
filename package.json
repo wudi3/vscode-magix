@@ -11,16 +11,30 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:mx.plugin",
+        "onLanguage:html",
+        "onLanguage:javascript",
+        "onLanguage:typescript"
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [
-            {
-                "command": "extension.sayHello",
-                "title": "Hello World"
-            }
-        ]
+        "commands": [{
+            "command": "mx.plugin",
+            "title": "MX"
+        }],
+        "keybindings": [{
+            "command": "mx.plugin",
+            "key": "ctrl+cmd+m",
+            "mac": "ctrl+cmd+m",
+            "when": "editorTextFocus"
+        }],
+        "menus": {
+            "editor/context": [{
+                "when": "resourceLangId ==  typescript",
+                "command": "mx.plugin",
+                "group": "mx"
+            }]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
