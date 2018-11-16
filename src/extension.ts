@@ -10,6 +10,7 @@ import {Jumper} from './jumper';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
    
+    
     //初始化期，初始化基本数据
     new Initializer().init();
 

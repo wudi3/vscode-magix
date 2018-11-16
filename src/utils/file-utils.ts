@@ -10,7 +10,7 @@ export class FileUtils {
      * getProjectPath() 会自动从 activeTextEditor 拿document对象，如果没有拿到则报错
      * @param {*} document 
      */
-  static getProjectPath(document: vscode.TextDocument): string {
+  static getProjectPath(document: vscode.TextDocument | undefined): string {
     if (!document && vscode.window.activeTextEditor) {
       document = vscode.window.activeTextEditor.document;
     }
