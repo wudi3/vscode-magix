@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+
 export class FileUtils {
   /**
      * 获取当前所在工程根目录，有3种使用方法：<br>
@@ -62,4 +63,19 @@ export class FileUtils {
   static lowerFirstLeter(word: string): string {
     return (word || '').replace(/^\w/, m => m.toLowerCase());
   }
+
+ /**
+  * 递归创建目录 同步方法  
+  * @param dirname  
+  */
+static mkDirsSync(dirname:string) {  
+  if (fs.existsSync(dirname)) {  
+      return true;  
+  } else {  
+      if (FileUtils.mkDirsSync(path.dirname(dirname))) {  
+          fs.mkdirSync(dirname);  
+          return true;  
+      }  
+  }  
+} 
 }

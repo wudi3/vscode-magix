@@ -4,18 +4,24 @@
 import * as vscode from 'vscode';
 import {Initializer} from './initializer';
 import {Jumper} from './jumper';
+import { DBHelper } from './utils/DBHelper';
 
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
    
-    
     //初始化期，初始化基本数据
-    new Initializer().init();
+    new Initializer().init().then((dbHelper:DBHelper)=>{
+        new Jumper().register(context,dbHelper);
+    }).catch((info)=>{
+
+    });
 
     //定义跳转器
-    new Jumper().register(context);
+   
+
+    
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated

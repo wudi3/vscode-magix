@@ -2,20 +2,26 @@ import * as vscode from 'vscode';
 import { Command } from './command';
 import * as path from 'path';
 import * as fs from 'fs';
+import { DBHelper } from './utils/DBHelper';
+import { resolve } from 'url';
 
 export class Jumper {
-/**
- * 注册 command 和 provider
- * @param context 
- */
-  register(context: vscode.ExtensionContext) {
+
+  dbHelper: DBHelper | undefined;
+
+  /**
+   * 注册 command 和 provider
+   * @param context 
+   */
+  public register(context: vscode.ExtensionContext, dbHelper: DBHelper) {
+    this.dbHelper = dbHelper;
     this.registerCommand(context);
     this.registerProvider(context);
   }
-/**
- * 注册command
- * @param context 
- */
+  /**
+   * 注册command
+   * @param context 
+   */
   private registerCommand(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand(Command.COMMAND_JUMP_TO_HTML, (args) => {
       this.jumpToHtml(args.path);
@@ -31,6 +37,10 @@ export class Jumper {
   private registerProvider(context: vscode.ExtensionContext) {
     const JTS_MODE = [{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }];
     context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE, new MXDefinitionProvider()));
+    const HTML_MODE = [{ language: 'html', scheme: 'file' }];
+    let htmlProvider:HtmlDefinitionProvider = new HtmlDefinitionProvider();
+    htmlProvider.setDBHelper(this.dbHelper);
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider(HTML_MODE, htmlProvider));
   }
   /**
    * 跳转至 js 或 ts 文件
@@ -70,19 +80,55 @@ export class Jumper {
  */
 class MXDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-      
-      const fileName = document.fileName;
-      const workDir = path.dirname(fileName);
-      const word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\'(.*?)\'|\"(.*?)\"')));
-      const line = document.lineAt(position);
-      //const projectPath = util.getProjectPath(document);
-      let text = line.text.replace(/\s+/g, '');
-      if (text.indexOf('tmpl:') > -1) {
-          let path = workDir + '/' + word.replace(/(^\'*)|(\'*$)/g, '').replace(/(^\"*)|(\"*$)/g, '').replace('@', '');
-          console.log(path);
-          return new vscode.Location(vscode.Uri.file(path), new vscode.Position(0, 0));
+
+    const fileName = document.fileName;
+    const workDir = path.dirname(fileName);
+    const word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\'(.*?)\'|\"(.*?)\"')));
+    const line = document.lineAt(position);
+
+    //const projectPath = util.getProjectPath(document);
+    let text = line.text.replace(/\s+/g, '');
+    if (text.indexOf('tmpl:') > -1) {
+      let path = workDir + '/' + word.replace(/(^\'*)|(\'*$)/g, '').replace(/(^\"*)|(\"*$)/g, '').replace('@', '');
+      let p:Promise<vscode.Location> = new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+          resolve(new vscode.Location(vscode.Uri.file(path), new vscode.Position(0, 0)));
+        },1000);
+      });
+      return p;
+    }
+
+  }
+}
+class HtmlDefinitionProvider implements vscode.DefinitionProvider {
+  dbHelper:DBHelper|undefined;
+  public setDBHelper(dbHelper:DBHelper|undefined){
+    this.dbHelper = dbHelper;
+  }
+  provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
+
+    const fileName = document.fileName;
+    const workDir = path.dirname(fileName);
+    const word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\'(.*?)\'|\"(.*?)\"')));
+    const line = document.lineAt(position);
+
+    let text = line.text.replace(/\s+/g, '');
+    let p:Promise<vscode.Location> = new Promise((resolve,reject)=>{
+      if (text.indexOf('mx-') > -1) {
+        if(this.dbHelper){
+           this.dbHelper.getESByHtml(fileName).then((arr:Array<string>)=>{
+            console.log(arr); 
+            if(arr.length > 0){
+              resolve(new vscode.Location(vscode.Uri.file(arr[0]), new vscode.Position(0, 0)));
+            }
+           });
+        }
+        
+         
       }
-      
+    });
+    return p;
+
   }
 }
 

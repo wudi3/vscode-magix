@@ -1,52 +1,70 @@
-import { window, commands } from 'vscode';
-import { Command } from './command';
-
+import { window, commands, TextEditor } from 'vscode';
+import { DBHelper } from './utils/DBHelper';
+import { ESFileInfo } from './model/ESFileInfo';
+import { Cache } from './utils/CacheUtils';
+import { ESFileAnalyzer } from './utils/ESFileAnalyzer';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as fut from './utils/file-utils';
+import * as fut from './utils/FileUtils';
 import * as parse5 from 'parse5';
-const babylon = require("babylon");
 
 export class Initializer {
-  test(params: string) {
-    commands.getCommands(true);
+  /**
+   * 扫描项目文件夹
+   */
+  private scanFile(dbHelper: DBHelper) {
+
     let fileList: Array<string> = [];
     let rootPath = fut.FileUtils.getProjectPath(undefined);
     this.listFiles(rootPath, fileList);
-    console.info(fileList);
+
     fileList.forEach((filePath) => {
       let extName = path.extname(filePath);
+      if (filePath.indexOf('app/views') < 0) {
+        return;
+      }
       if (extName === '.html') {
         let content = fs.readFileSync(filePath, 'UTF-8');
         let document: parse5.Document = parse5.parse(content, { scriptingEnabled: false, sourceCodeLocationInfo: true });
-
-        console.info(document);
+        var reg = new RegExp('<(\S*?)[^>]*>.*?|<.*? />', "g");
+        let strArr = content.match(reg);
+        if (strArr) {
+          strArr.forEach(element => {
+          });
+        }
       }
       else if (extName === '.ts' || extName === '.js') {
-        console.info(filePath);
+
         let content = fs.readFileSync(filePath, 'UTF-8');
         try {
-          let doc = babylon.parse(content, {
-            allowImportExportEverywhere: true, allowReturnOutsideFunction: true, plugins: [
-              // enable jsx and flow syntax
-              "typescript", "estree", "jsx", "flow", "objectRestSpread"
-            ]
-          });
+
+          content.match(/(['"]?)tmpl\1.*?\@([^'"]*?)['"]/gi);
+          console.log('strArr', RegExp.$2);
+          dbHelper.addESHtmlFileMapping(filePath, path.join(path.dirname(filePath), RegExp.$2));
+
         } catch (error) {
-          console.log(error);
+
         }
 
 
       }
     });
+
+
     console.log('done');
   }
-  listFiles(parentPath: string, fileList: Array<string>) {
+
+  /**
+   * 列出项目所有文件
+   * @param parentPath 
+   * @param fileList 
+   */
+  private listFiles(parentPath: string, fileList: Array<string>) {
     let files = fs.readdirSync(parentPath);
-    if(parentPath.indexOf('/.') > -1 || parentPath.indexOf('node_modules')  > -1 ){
+    if (parentPath.indexOf('/.') > -1 || parentPath.indexOf('node_modules') > -1) {
       return;
     }
-    console.log(parentPath);
+
     files.forEach((item) => {
       item = path.join(parentPath, item);
       let stat = fs.statSync(item);
@@ -56,17 +74,44 @@ export class Initializer {
         }
         else if (stat.isFile()) {
           fileList.push(item);
-        }  
+        }
       } catch (error) {
         console.log(error);
       }
     });
 
   }
-  init() {
-    // setInterval(()=>{
-    //   Command.MM.push('ttt');
-    // },1000);
-    this.test('');
+ 
+  private startWatching() {
+    //当编辑窗口活动时分析其内容
+    window.onDidChangeActiveTextEditor((e: any) => {
+      let editor: TextEditor | undefined = window.activeTextEditor;
+      if (editor && editor.document) {
+        let path: string = editor.document.uri.path;
+        let languageId: string = editor.document.languageId;
+        if (languageId === 'typescript' || languageId === 'javascript') {
+          let info: ESFileInfo | null = ESFileAnalyzer.analyseESFile(editor.document.getText(), path);
+          if (info) {
+            Cache.set(path, info);
+            console.log(Cache.get(path));
+          }
+        }
+      }
+    });
+
   }
+  public init(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let dbHelper = new DBHelper('');
+      dbHelper.init().then(() => {
+        this.startWatching();
+        this.scanFile(dbHelper);
+        resolve(dbHelper);
+      }).catch((info) => {
+        console.error(info);
+        reject(info);
+      });
+    });
+  }
+
 }
