@@ -3,7 +3,9 @@ import { Command } from './command';
 import * as path from 'path';
 import * as fs from 'fs';
 import { DBHelper } from './utils/DBHelper';
-import { resolve } from 'url';
+import { ESFileProvider } from './provider/ESFileProvider';
+import { ESFileInfo } from './model/ESFileInfo';
+
 
 export class Jumper {
 
@@ -38,7 +40,7 @@ export class Jumper {
     const JTS_MODE = [{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }];
     context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE, new MXDefinitionProvider()));
     const HTML_MODE = [{ language: 'html', scheme: 'file' }];
-    let htmlProvider:HtmlDefinitionProvider = new HtmlDefinitionProvider();
+    let htmlProvider: HtmlDefinitionProvider = new HtmlDefinitionProvider();
     htmlProvider.setDBHelper(this.dbHelper);
     context.subscriptions.push(vscode.languages.registerDefinitionProvider(HTML_MODE, htmlProvider));
   }
@@ -90,10 +92,10 @@ class MXDefinitionProvider implements vscode.DefinitionProvider {
     let text = line.text.replace(/\s+/g, '');
     if (text.indexOf('tmpl:') > -1) {
       let path = workDir + '/' + word.replace(/(^\'*)|(\'*$)/g, '').replace(/(^\"*)|(\"*$)/g, '').replace('@', '');
-      let p:Promise<vscode.Location> = new Promise((resolve,reject)=>{
-        setTimeout(()=>{
+      let p: Promise<vscode.Location> = new Promise((resolve, reject) => {
+        setTimeout(() => {
           resolve(new vscode.Location(vscode.Uri.file(path), new vscode.Position(0, 0)));
-        },1000);
+        }, 1000);
       });
       return p;
     }
@@ -101,30 +103,30 @@ class MXDefinitionProvider implements vscode.DefinitionProvider {
   }
 }
 class HtmlDefinitionProvider implements vscode.DefinitionProvider {
-  dbHelper:DBHelper|undefined;
-  public setDBHelper(dbHelper:DBHelper|undefined){
+  dbHelper: DBHelper | undefined;
+  public setDBHelper(dbHelper: DBHelper | undefined) {
     this.dbHelper = dbHelper;
   }
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
 
     const fileName = document.fileName;
     const workDir = path.dirname(fileName);
-    const word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\'(.*?)\'|\"(.*?)\"')));
+    let word = document.getText(document.getWordRangeAtPosition(position, new RegExp('mx-click=\'(.*?)\'|mx-click=\"(.*?)\"')));
     const line = document.lineAt(position);
-
+    word = 'advance<click>';
     let text = line.text.replace(/\s+/g, '');
-    let p:Promise<vscode.Location> = new Promise((resolve,reject)=>{
+    let p: Promise<vscode.Location> = new Promise((resolve, reject) => {
       if (text.indexOf('mx-') > -1) {
-        if(this.dbHelper){
-           this.dbHelper.getESByHtml(fileName).then((arr:Array<string>)=>{
-            console.log(arr); 
-            if(arr.length > 0){
-              resolve(new vscode.Location(vscode.Uri.file(arr[0]), new vscode.Position(0, 0)));
+        if (this.dbHelper) {
+          this.dbHelper.getESByHtml(fileName).then((arr: Array<string>) => {
+            if (arr.length > 0) {
+              let position: vscode.Position = ESFileProvider.provideFnPosition(word, arr[0], '');
+              resolve(new vscode.Location(vscode.Uri.file(arr[0]), position));
             }
-           });
+          });
         }
-        
-         
+
+
       }
     });
     return p;

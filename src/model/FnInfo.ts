@@ -1,10 +1,10 @@
 export class FnInfo {
 
   fnName:string;
-  startLine:Number;
-  startColumn:Number;
-  endLine:Number;
-  endColumn:Number;
+  startLine:number;
+  startColumn:number;
+  endLine:number;
+  endColumn:number;
   constructor(data:any={}){
 
     this.fnName = data.fnName || "";
