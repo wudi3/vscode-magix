@@ -6,8 +6,10 @@ import * as fs from 'fs';
 import { FnInfo } from '../model/FnInfo';
 
 export class ESFileProvider {
-  public static provide(filePath: string, content: string): ESFileInfo | any {
+
+  public static provideFileInfo(filePath: string, content: string): ESFileInfo | any {
     if (Cache.has(filePath)) {
+      console.log('from Cache');
       return Cache.get(filePath);
     }
     else {
@@ -21,14 +23,35 @@ export class ESFileProvider {
       return info;
     }
   }
-  public static provideFnPosition(fnName: string, filePath: string, content: string): vscode.Position {
-    let fileInfo: ESFileInfo = this.provide(filePath, content);
+
+  public static provideFnPosition(fnName: string|Array<string>, filePath: string, content: string): vscode.Position {
+    //先找到es文件信息
+    let fileInfo: ESFileInfo = this.provideFileInfo(filePath, content);
     if (!fileInfo) {
       return new vscode.Position(0, 0);
     }
-    let fnInfo: FnInfo | undefined = fileInfo.functions.find(fn => {
-      return fn.fnName === fnName;
-    });
+    let fnInfo: FnInfo | undefined;
+    if(fnName instanceof Array){
+      let canBreak = false;
+      let l:number = fileInfo.functions.length;
+      for (let i = 0; i < l; i++) {
+        let name = fileInfo.functions[i].fnName;
+        for (let j = 0; j < fnName.length; j++) {
+          if (name === fnName[j]) {
+            fnInfo = fileInfo.functions[i];
+            canBreak = true;
+            break;
+          }
+        }
+        if (canBreak) {
+          break;
+        }
+      }
+    }else{
+      fnInfo = fileInfo.functions.find(fn => {
+        return fn.fnName === fnName;
+      });
+    }
     if (!fnInfo) {
       return new vscode.Position(0, 0);
     }

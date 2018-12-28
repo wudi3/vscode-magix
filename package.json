@@ -24,19 +24,24 @@
         "title": "MX"
       },
       {
-        "command": "MX_JumpToHtml",
-        "title": "跳转至html"
+        "command": "mx.jumper.toHtml",
+        "title": "magix-跳转至html"
       },
       {
-        "command": "MX_JumpToJTS",
-        "title": "跳转至js/ts"
+        "command": "mx.jumper.toES",
+        "title": "magix-跳转至js/ts"
+      },
+      {
+        "command": "mx.jumper.backAndForth",
+        "title": "MX"
       }
     ],
     "keybindings": [
+      
       {
-        "command": "mx.plugin",
-        "key": "ctrl+cmd+m",
-        "mac": "ctrl+cmd+m",
+        "command": "mx.jumper.backAndForth",
+        "key": "alt+tab",
+        "mac": "alt+tab",
         "when": "editorTextFocus"
       }
     ],
@@ -44,17 +49,17 @@
       "editor/context": [
         {
           "when": "resourceLangId ==  typescript",
-          "command": "MX_JumpToHtml",
+          "command": "mx.jumper.toHtml",
           "group": "0_mx"
         },
         {
           "when": "resourceLangId ==  javascript",
-          "command": "MX_JumpToHtml",
+          "command": "mx.jumper.toHtml",
           "group": "0_mx"
         },
         {
           "when": "resourceLangId ==  html",
-          "command": "MX_JumpToJTS",
+          "command": "mx.jumper.toES",
           "group": "0_mx"
         }
       ]

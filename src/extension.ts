@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import {Initializer} from './initializer';
 import {Jumper} from './jumper';
-import { DBHelper } from './utils/DBHelper';
+
 
 
 // this method is called when your extension is activated
@@ -12,8 +12,8 @@ import { DBHelper } from './utils/DBHelper';
 export function activate(context: vscode.ExtensionContext) {
    
     //初始化期，初始化基本数据
-    new Initializer().init().then((dbHelper:DBHelper)=>{
-        new Jumper().register(context,dbHelper);
+    new Initializer().init().then(()=>{
+        new Jumper().register(context);
     }).catch((info)=>{
 
     });
