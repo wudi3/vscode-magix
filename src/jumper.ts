@@ -56,7 +56,7 @@ export class Jumper {
   private registerProvider(context: vscode.ExtensionContext) {
 
     const JTS_MODE = [{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }];
-   // context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE, new MXDefinitionProvider()));
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE, new MXDefinitionProvider()));
     context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE,new MXInnerDefinitionProvider()));
     const HTML_MODE = [{ language: 'html', scheme: 'file' }];
     let htmlProvider: HtmlDefinitionProvider = new HtmlDefinitionProvider();
@@ -120,7 +120,7 @@ class MXInnerDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
 
     const fileName = document.fileName;
-    const workDir = path.dirname(fileName);
+    //const workDir = path.dirname(fileName);
    // const  word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\.(\w*?)\(')));
     const line = document.lineAt(position);
    
@@ -138,25 +138,28 @@ class HtmlDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
 
     const fileName = document.fileName;
-    const workDir = path.dirname(fileName);
+    
     let word = document.getText(document.getWordRangeAtPosition(position, new RegExp('mx-[a-z]+\s*=\s*\'(.*?)\'|mx-[a-z]+\s*=\s*\"(.*?)\"')));
-    const line = document.lineAt(position);
+   
     // word = 'advance<click>';
     let mappingDao: ESHtmlMappingDao = new ESHtmlMappingDao();
     let p: Promise<vscode.Location> = new Promise((resolve, reject) => {
       if (word.indexOf('mx-') > -1) {
         let mx = word.match(/mx-[a-z]+/);
-        let mxMethod = mx[0].replace('mx-', '');
-        let userMethod = word.replace(/mx-[a-z]+\s*=\s*\'|mx-[a-z]+\s*=\s*\"/, '');
-        userMethod = userMethod.replace(/(\(.*?\)|\s*)(\'|\")/, '');
-        let fnName: Array<string> = [userMethod, userMethod + '<' + mxMethod + '>'];
-
-        mappingDao.getESByHtml(fileName).then((arr: Array<string>) => {
-          if (arr.length > 0) {
-            let position: vscode.Position = ESFileProvider.provideFnPosition(fnName, arr[0], '');
-            resolve(new vscode.Location(vscode.Uri.file(arr[0]), position));
-          }
-        });
+        if(mx && mx.length > 0){
+          let mxMethod = mx[0].replace('mx-', '');
+          let userMethod = word.replace(/mx-[a-z]+\s*=\s*\'|mx-[a-z]+\s*=\s*\"/, '');
+          userMethod = userMethod.replace(/(\(.*?\)|\s*)(\'|\")/, '');
+          let fnName: Array<string> = [userMethod, userMethod + '<' + mxMethod + '>'];
+  
+          mappingDao.getESByHtml(fileName).then((arr: Array<string>) => {
+            if (arr.length > 0) {
+              let position: vscode.Position = ESFileProvider.provideFnPosition(fnName, arr[0], '');
+              resolve(new vscode.Location(vscode.Uri.file(arr[0]), position));
+            }
+          });
+        }
+       
 
 
 

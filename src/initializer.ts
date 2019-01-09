@@ -1,4 +1,4 @@
-import { window, commands, TextEditor } from 'vscode';
+import { window,  TextEditor } from 'vscode';
 import { DBHelper } from './db/DBHelper';
 import { ESFileInfo } from './model/ESFileInfo';
 import { Cache } from './utils/CacheUtils';
@@ -6,8 +6,9 @@ import { ESFileAnalyzer } from './utils/ESFileAnalyzer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as fut from './utils/FileUtils';
-import * as parse5 from 'parse5';
+//import * as parse5 from 'parse5';
 import { ESHtmlMappingDao } from './db/ESHtmlMappingDao';
+
 
 export class Initializer {
   /**
@@ -21,12 +22,13 @@ export class Initializer {
     let mappingDao:ESHtmlMappingDao  = new ESHtmlMappingDao();
     fileList.forEach((filePath) => {
       let extName = path.extname(filePath);
-      if (filePath.indexOf('app/views') < 0) {
+      if (filePath.indexOf('src') < 0) {
         return;
       }
       if (extName === '.html') {
         let content = fs.readFileSync(filePath, 'UTF-8');
-        let document: parse5.Document = parse5.parse(content, { scriptingEnabled: false, sourceCodeLocationInfo: true });
+       // let document: parse5.Document = parse5.parse(content, { scriptingEnabled: false, sourceCodeLocationInfo: true });
+      
         var reg = new RegExp('<(\S*?)[^>]*>.*?|<.*? />', "g");
         let strArr = content.match(reg);
         if (strArr) {
@@ -41,13 +43,25 @@ export class Initializer {
 
           content.match(/(['"]?)tmpl\1.*?\@([^'"]*?)['"]/gi);
           console.log('strArr', RegExp.$2);
-          mappingDao.addESHtmlFileMapping(filePath, path.join(path.dirname(filePath), RegExp.$2));
+          let tmplVal:string = RegExp.$2;
+          if(tmplVal){
+            mappingDao.addESHtmlFileMapping(filePath, path.join(path.dirname(filePath), tmplVal));
+          }else{
+            //KISSY 版本
+           let index:number = content.search(/\s*KISSY\s*\.\s*add\s*\(/g);
+           if(index === 0){
+            let htmlPath:string = path.join(path.dirname(filePath),path.basename(filePath).replace(path.extname(filePath),'.html'));
+            mappingDao.addESHtmlFileMapping(filePath, htmlPath);
+           }
+          }
+         
 
         } catch (error) {
 
         }
-
-
+      }else if(extName === '.es'){
+        let htmlPath:string = path.join(path.dirname(filePath),path.basename(filePath).replace(path.extname(filePath),'.html'));
+        mappingDao.addESHtmlFileMapping(filePath, htmlPath);
       }
     });
 
@@ -102,7 +116,13 @@ export class Initializer {
 
   }
   public init(): Promise<any> {
+    
     return new Promise((resolve, reject) => {
+//       request('http://www.baidu.com', function (error, response, body) {
+//   if (!error && response.statusCode == 200) {
+//     console.log(body); // 打印google首页
+//   }
+// });
       DBHelper.init('').then(() => {
         this.startWatching();
         this.scanFile();
