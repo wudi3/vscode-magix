@@ -18,7 +18,8 @@
   ],
   "main": "./out/extension",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "mx.plugin",
         "title": "MX"
       },
@@ -35,14 +36,17 @@
         "title": "MX"
       }
     ],
-    "keybindings": [{
-      "command": "mx.jumper.backAndForth",
-      "key": "alt+tab",
-      "mac": "alt+tab",
-      "when": "editorTextFocus"
-    }],
+    "keybindings": [
+      {
+        "command": "mx.jumper.backAndForth",
+        "key": "alt+tab",
+        "mac": "alt+tab",
+        "when": "editorTextFocus"
+      }
+    ],
     "menus": {
-      "editor/context": [{
+      "editor/context": [
+        {
           "when": "resourceLangId ==  typescript",
           "command": "mx.jumper.toHtml",
           "group": "0_mx"
@@ -60,14 +64,17 @@
       ]
     },
     "viewsContainers": {
-      "activitybar": [{
-        "id": "beautifulGirl",
-        "title": "美女",
-        "icon": "images/beautifulGirl.svg"
-      }]
+      "activitybar": [
+        {
+          "id": "beautifulGirl",
+          "title": "美女",
+          "icon": "images/beautifulGirl.svg"
+        }
+      ]
     },
     "views": {
-      "beautifulGirl": [{
+      "beautifulGirl": [
+        {
           "id": "beautifulGirl1",
           "name": "国内美女"
         },
@@ -82,7 +89,6 @@
       ]
     }
   },
-
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -102,13 +108,10 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
-    "@types/node": "^8.10.25",
     "@types/parse5": "^5.0.0",
     "babylon": "^6.18.0",
     "map-lru": "^1.0.2",
-    "tslint": "^5.8.0",
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.21"
+    "opn": "^4.0.2"
   },
   "repository": {
     "type": "git",

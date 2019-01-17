@@ -3,7 +3,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Initializer } from './initializer';
-import { ToDefinitionCommand } from './command';
+import { ToDefinitionCommand,Command } from './command';
+import {DiamondCommand} from './command/DiamondCommand';
 import { MXDefinitionProvider, MXInnerDefinitionProvider, HtmlDefinitionProvider } from './provider/VSDefinitionProvider';
 import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvider';
 
@@ -16,6 +17,10 @@ export function activate(context: vscode.ExtensionContext) {
         //注册跳转到定义command
         let command: ToDefinitionCommand = new ToDefinitionCommand();
         command.registerCommand(context);
+
+        let  diamondCommand:DiamondCommand = new DiamondCommand();
+        diamondCommand.registerCommand(context);
+
         //注册es代码跳转command
         const JTS_MODE = [{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }];
         context.subscriptions.push(vscode.languages.registerDefinitionProvider(JTS_MODE, new MXDefinitionProvider()));
@@ -26,13 +31,16 @@ export function activate(context: vscode.ExtensionContext) {
         //注册代码提示
         context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new MXEventCompletionItemProvider(),'=','\'','"'));
        
-        vscode.window.setStatusBarMessage('http://www.baidu.com',10000);
-        
-        const panel =  vscode.window.createWebviewPanel('beautifulGirl','test', vscode.ViewColumn.One, {
-            enableScripts: true, // 启用JS，默认禁用
-            retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
-        });
-        panel.webview.html = 'test';
+       let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
+        status.text="diamand日常";
+        status.tooltip = 'http://www.baidu.com';
+        status.show();
+        status.command=Command.COMMAND_DIAMOND_OPEN_DAILY;
+         status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
+        status.text="diamand语法";
+        status.tooltip = 'http://www.baidu.com';
+        status.show();
+        status.command=Command.COMMAND_DIAMOND_OPEN_PRE;
         
     }).catch((info) => {
 
