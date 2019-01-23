@@ -3,14 +3,18 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Initializer } from './initializer';
-import { ToDefinitionCommand,Command } from './command';
+import { Command } from './command';
+import {ToDefinitionCommand} from './command/ToDefinitionCommand';
 import {DiamondCommand} from './command/DiamondCommand';
 import { MXDefinitionProvider, MXInnerDefinitionProvider, HtmlDefinitionProvider } from './provider/VSDefinitionProvider';
 import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvider';
+import {ConfigManager} from './utils/ConfigManager';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+
+
 
     //初始化期，初始化基本数据
     new Initializer().init().then(() => {
@@ -31,41 +35,43 @@ export function activate(context: vscode.ExtensionContext) {
         //注册代码提示
         context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new MXEventCompletionItemProvider(),'=','\'','"'));
        
-       let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
-        status.text="diamand日常";
-        status.tooltip = 'http://www.baidu.com';
-        status.show();
-        status.command=Command.COMMAND_DIAMOND_OPEN_DAILY;
-         status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
-        status.text="diamand语法";
-        status.tooltip = 'http://www.baidu.com';
-        status.show();
-        status.command=Command.COMMAND_DIAMOND_OPEN_PRE;
+        initViews();
         
     }).catch((info) => {
 
     });
 
-    //定义跳转器
-
-
-
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "mx-plugin" is now active!');
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
     let disposable = vscode.commands.registerCommand('mx.plugin', (args) => {
-        // The code you place here will be executed every time your command is executed
+       
         vscode.window.showInformationMessage('Hello World!');
     });
     context.subscriptions.push(disposable);
 
 }
-// this method is called when your extension is deactivated
+
 export function deactivate() {
     console.info('插件不活动啦。。。。deactivate');
+}
+
+function initViews(){
+
+    let config:any = ConfigManager.read();
+
+    let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
+    status.text="Diamond日常";
+    if(config.diamond.daily.appName){
+        status.tooltip = 'http://www.baidu.com';
+    }
+    status.show();
+    status.command=Command.COMMAND_DIAMOND_OPEN_DAILY;
+
+    status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
+    status.text="Diamond预发";
+    if(config.diamond.pre.appName){
+        status.tooltip = 'http://www.baidu.com';
+    }
+    status.show();
+    status.command=Command.COMMAND_DIAMOND_OPEN_PRE;
 }

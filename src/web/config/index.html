@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <h4>Diamond配置</h4>
+  <div>
+    <h5>日常配置</h5>
+    <div>
+      serverId:<input type="text" id="diamond.daily.serverId">
+    </div>
+    <div>
+      appName:<input type="text" id="diamond.daily.appName">
+    </div>
+    <div>
+      dataId:<input type="text" id="diamond.daily.dataId">
+    </div>
+    <div>
+        groupId:<input type="text" id="diamond.daily.group">
+    </div>
+  </div>
+  <div>
+    <h5>预发配置</h5>
+    <div>
+      serverId:<input type="text" id="diamond.pre.serverId">
+    </div>
+    <div>
+      appName:<input type="text" id="diamond.pre.appName">
+    </div>
+    <div>
+      dataId:<input type="text" id="diamond.pre.dataId">
+    </div>
+    <div>
+        groupId:<input type="text" id="diamond.pre.group">
+    </div>
+  </div>
+  <button onclick="save()">保存</button>
+  <div id="msg"></div>
+
+</body>
+<script>
+  var configData;
+  var vscode;
+  (function () {
+    vscode = acquireVsCodeApi();
+  })();
+  window.addEventListener('message', event => {
+    const data = event.data;
+    document.getElementById('msg').innerHTML = 'data:' + JSON.stringify(data);
+    if (data.type === 'loaded') {
+      configData = data.config;
+      ['daily', 'pre'].forEach((serverKey) => {
+        ['serverId', 'appName', 'dataId', 'group'].forEach((key) => {
+          document.getElementById('diamond.' + serverKey + '.' + key).value = data.config.diamond[serverKey][key];
+        });
+      });
+    }
+  });
+  function save() {
+    try {
+      ['daily', 'pre'].forEach((serverKey) => {
+        ['serverId', 'appName', 'dataId', 'group'].forEach((key) => {
+          configData.diamond[serverKey][key] = document.getElementById('diamond.' + serverKey + '.' + key).value  ;
+        });
+      });
+     
+      let data ={config:configData,type:'save'};
+
+      vscode.postMessage(data);
+    } catch (error) {
+      document.getElementById('msg').innerHTML = error;
+    }
+
+  }
+  
+</script>
+
+</html>

@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as fut from './utils/FileUtils';
 //import * as parse5 from 'parse5';
 import { HtmlESMappingCache } from './utils/CacheUtils';
-
+import {ConfigManager} from './utils/ConfigManager';
 
 export class Initializer {
   /**
@@ -115,6 +115,8 @@ export class Initializer {
   public init(): Promise<any> {
 
     return new Promise((resolve, reject) => {
+      
+      ConfigManager.init();
 
       this.startWatching();
       this.scanFile();
