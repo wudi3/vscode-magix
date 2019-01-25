@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
         let command: ToDefinitionCommand = new ToDefinitionCommand();
         command.registerCommand(context);
 
-        let  diamondCommand:DiamondCommand = new DiamondCommand();
+        let diamondCommand:DiamondCommand = new DiamondCommand();
         diamondCommand.registerCommand(context);
 
         //注册es代码跳转command
@@ -38,16 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
         initViews();
         
     }).catch((info) => {
-
+        console.error(info);
+        return;
     });
 
     console.log('Congratulations, your extension "mx-plugin" is now active!');
 
-    let disposable = vscode.commands.registerCommand('mx.plugin', (args) => {
-       
-        vscode.window.showInformationMessage('Hello World!');
-    });
-    context.subscriptions.push(disposable);
 
 }
 

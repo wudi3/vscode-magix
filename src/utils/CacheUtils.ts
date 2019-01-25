@@ -13,6 +13,9 @@ export class Cache {
   static has(key: string) {
     return this.cache.has(key);
   }
+  static remove(key:string){
+    this.cache.remove(key);
+  }
 
 }
 export class HtmlESMappingCache{
@@ -25,6 +28,34 @@ export class HtmlESMappingCache{
    */
   static addMapping(esFilePath:string,htmlFilePath:string){
     this.mapping.set(htmlFilePath,esFilePath);
+  }
+  /**
+   * 移除映射关系
+   * @param esFilePath 
+   */
+  public static removeMappingByEsFile(esFilePath:string){
+    if(esFilePath){
+      let htmlKey:string = '';
+      this.mapping.forEach((value:string,key:string)=>{
+        if(value === esFilePath){
+          htmlKey = key;
+          return;
+        }
+      });
+      if(htmlKey){
+        this.mapping.delete(htmlKey);
+      }
+    }
+   
+  }
+  /**
+   * 
+   * @param htmlFilePath 
+   */
+  public static removeMappingByHtmlFile(htmlFilePath:string){
+    if(htmlFilePath){
+      this.mapping.delete(htmlFilePath);
+    }
   }
   /**
    * 通过html文件获取相对应的es文件

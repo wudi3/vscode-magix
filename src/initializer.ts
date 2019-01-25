@@ -1,4 +1,4 @@
-import { window, TextEditor } from 'vscode';
+import { window, TextEditor,workspace,  FileSystemWatcher, Uri } from 'vscode';
 import { ESFileInfo } from './model/ESFileInfo';
 import { Cache } from './utils/CacheUtils';
 import { ESFileAnalyzer } from './utils/ESFileAnalyzer';
@@ -36,36 +36,39 @@ export class Initializer {
         }
       }
       else if (extName === '.ts' || extName === '.js') {
-
         let content = fs.readFileSync(filePath, 'UTF-8');
-        try {
-
-          content.match(/(['"]?)tmpl\1.*?\@([^'"]*?)['"]/gi);
-
-          let tmplVal: string = RegExp.$2;
-          if (tmplVal) {
-            let htmlPath: string = path.join(path.dirname(filePath), tmplVal);
-            HtmlESMappingCache.addMapping(filePath, htmlPath);
-          } else {
-            //KISSY 版本
-            let index: number = content.search(/\s*KISSY\s*\.\s*add\s*\(/g);
-            if (index === 0) {
-              let htmlPath: string = path.join(path.dirname(filePath), path.basename(filePath).replace(path.extname(filePath), '.html'));
-              HtmlESMappingCache.addMapping(filePath, htmlPath);
-            }
-          }
-        } catch (error) {
-
-        }
+        this.mappingFile(content,filePath);
       } else if (extName === '.es') {
-        let htmlPath: string = path.join(path.dirname(filePath), path.basename(filePath).replace(path.extname(filePath), '.html'));
-        HtmlESMappingCache.addMapping(filePath, htmlPath);
+        this.mappingSameFile(filePath);
       }
     });
 
     console.log('done');
   }
+  private mappingFile(content: string, filePath: string){
+    try {
 
+      content.match(/(['"]?)tmpl\1.*?\@([^'"]*?)['"]/gi);
+
+      let tmplVal: string = RegExp.$2;
+      if (tmplVal) {
+        let htmlPath: string = path.join(path.dirname(filePath), tmplVal);
+        HtmlESMappingCache.addMapping(filePath, htmlPath);
+      } else {
+        //KISSY 版本
+        let index: number = content.search(/\s*KISSY\s*\.\s*add\s*\(/g);
+        if (index === 0) {
+         this.mappingSameFile(filePath);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  private mappingSameFile(filePath: string){
+    let htmlPath: string = path.join(path.dirname(filePath), path.basename(filePath).replace(path.extname(filePath), '.html'));
+    HtmlESMappingCache.addMapping(filePath, htmlPath);
+  }
   /**
    * 列出项目所有文件
    * @param parentPath 
@@ -102,16 +105,60 @@ export class Initializer {
         let path: string = editor.document.uri.path;
         let languageId: string = editor.document.languageId;
         if (languageId === 'typescript' || languageId === 'javascript') {
-          let info: ESFileInfo | null = ESFileAnalyzer.analyseESFile(editor.document.getText(), path);
-          if (info) {
-            Cache.set(path, info);
-            console.log(Cache.get(path));
-          }
+         this.updateESCache(editor.document.getText(), path);
         }
       }
     });
-
+    //监听文件
+ 
+    let watcher: FileSystemWatcher = workspace.createFileSystemWatcher('**/*.{ts,js,html,css,less,json,es}', false, false, false);
+    watcher.onDidChange((e: Uri) => {
+      let filePath = e.fsPath;
+      let ext:string = path.extname(filePath);
+      if(ext === '.ts' || ext === '.js' || ext === '.es'){
+        let content:string = fs.readFileSync(filePath, 'utf-8');
+        if(ext === '.es'){
+          this.mappingSameFile(filePath);
+        }else{
+          this.mappingFile(content,filePath);
+        }
+        this.updateESCache(content, filePath);
+      }
+      
+    });
+    watcher.onDidCreate((e: Uri) => {
+      let filePath = e.fsPath;
+      let ext:string = path.extname(filePath);
+      if(ext === '.ts' || ext === '.js' || ext === '.es'){
+        let content:string = fs.readFileSync(filePath, 'utf-8');
+        if(ext === '.es'){
+          this.mappingSameFile(filePath);
+        }else{
+          this.mappingFile(content,filePath);
+        }
+        this.updateESCache(content, filePath);
+      }
+    });
+    watcher.onDidDelete((e: Uri) => {
+      let filePath = e.fsPath;
+      Cache.remove(filePath);
+     
+      let ext:string = path.extname(filePath);
+      if(ext === '.ts' || ext === '.js' || ext === '.es'){
+        HtmlESMappingCache.removeMappingByEsFile(filePath);
+      }else if(ext === '.html'){
+        HtmlESMappingCache.removeMappingByHtmlFile(filePath);
+      }
+    });
   }
+
+  private updateESCache(content: string, filePath: string){
+      let info: ESFileInfo | null = ESFileAnalyzer.analyseESFile(content, filePath);
+      if (info) {
+        Cache.set(filePath, info);
+      }
+  }
+  
   public init(): Promise<any> {
 
     return new Promise((resolve, reject) => {
@@ -124,5 +171,7 @@ export class Initializer {
 
     });
   }
+
+
 
 }
