@@ -16,7 +16,7 @@ export class MXEventCompletionItemProvider implements vscode.CompletionItemProvi
       this.arr.forEach((item) => {
         list.items.push(new vscode.CompletionItem('mx-' + item, vscode.CompletionItemKind.Field));
       });
-      
+      return list;
     } else if (/.?mx-[a-z]+\s*=(\"|\')$/.test(lineText)) {
       let esFilePath: any = HtmlESMappingCache.getEsFilePath(document.fileName);
       if (!esFilePath) {

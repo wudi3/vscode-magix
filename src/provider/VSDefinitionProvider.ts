@@ -35,12 +35,20 @@ export class MXInnerDefinitionProvider implements vscode.DefinitionProvider {
     //const workDir = path.dirname(fileName);
     // const  word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\.(\w*?)\(')));
     const line = document.lineAt(position);
-
-    let arr: any = line.text.match(/.(\w+)\(/);
-    if (arr.length === 2) {
-      let position: vscode.Position = ESFileProvider.provideFnPosition(arr[1], fileName, document.getText());
+    let beforeStr:string = line.text.substring(0,position.character);
+    let afterStr:string = line.text.substring(position.character,line.text.length -1);
+    let startIndex:number = beforeStr.lastIndexOf('.');
+    let endIndex:number = afterStr.indexOf('(');
+    if(startIndex > -1 && endIndex > -1){
+      let fnName:string = beforeStr.substring(startIndex+1,beforeStr.length)+afterStr.substring(0,endIndex);
+      let position: vscode.Position = ESFileProvider.provideFnPosition(fnName, fileName, document.getText());
+      if(position.line === 0 && position.character === 0)
+      {
+        return null;
+      }
       return new vscode.Location(document.uri, position);
     }
+    
 
 
   }
