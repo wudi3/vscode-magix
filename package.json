@@ -2,7 +2,7 @@
   "name": "mx-plugin",
   "displayName": "mx-plugin",
   "description": "This is the README for your extension \"mx-plugin\". After writing up a brief description, we recommend including the following sections.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "zhuori",
   "engines": {
     "vscode": "^1.28.0"
@@ -19,10 +19,6 @@
   "main": "./out/extension",
   "contributes": {
     "commands": [
-      {
-        "command": "mx.plugin",
-        "title": "MX"
-      },
       {
         "command": "mx.jumper.toHtml",
         "title": "magix-跳转至html"
