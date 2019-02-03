@@ -9,13 +9,12 @@ import {DiamondCommand} from './command/DiamondCommand';
 import { MXDefinitionProvider, MXInnerDefinitionProvider, HtmlDefinitionProvider } from './provider/VSDefinitionProvider';
 import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvider';
 import {ConfigManager} from './utils/ConfigManager';
+import {Logger} from './utils/Logger';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+
 export function activate(context: vscode.ExtensionContext) {
-
-
-
+    
+    let startTime:number  = new Date().getTime();
     //初始化期，初始化基本数据
     new Initializer().init().then(() => {
         //注册跳转到定义command
@@ -37,18 +36,20 @@ export function activate(context: vscode.ExtensionContext) {
        
         initViews();
         
+        Logger.logActivate(new Date().getTime() - startTime,'');
+        Logger.log('插件启动成功');
     }).catch((info) => {
-        console.error(info);
-        return;
+        Logger.logActivate(new Date().getTime() - startTime,info);
+        Logger.error(info);
     });
-
-    console.log('Congratulations, your extension "mx-plugin" is now active!');
-
+    
+  
 
 }
 
 export function deactivate() {
     console.info('插件不活动啦。。。。deactivate');
+    Logger.logDeactivate();
 }
 
 function initViews(){

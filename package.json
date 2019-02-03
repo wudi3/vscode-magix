@@ -2,7 +2,7 @@
   "name": "mx-plugin",
   "displayName": "mx-plugin",
   "description": "This is the README for your extension \"mx-plugin\". After writing up a brief description, we recommend including the following sections.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "zhuori",
   "engines": {
     "vscode": "^1.28.0"
@@ -74,8 +74,6 @@
           "id": "beautifulGirl1",
           "name": "插件设置"
         }
-       
-       
       ]
     }
   },
@@ -95,13 +93,18 @@
     "pouchdb": "^7.0.0",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
-    "vscode": "^1.1.21"
+    "vscode": "^1.1.21",
+    "postcss": "^7.0.14",
+    "postcss-less":"^3.1.2"
   },
   "dependencies": {
     "@types/parse5": "^5.0.0",
+    "@types/request": "^2.48.1",
     "babylon": "^6.18.0",
     "map-lru": "^1.0.2",
-    "opn": "^4.0.2"
+    "opn": "^4.0.2",
+    "postcss": "^7.0.14",
+    "postcss-less":"^3.1.2"
   },
   "repository": {
     "type": "git",

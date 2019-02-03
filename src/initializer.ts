@@ -8,6 +8,8 @@ import * as fut from './utils/FileUtils';
 //import * as parse5 from 'parse5';
 import { HtmlESMappingCache } from './utils/CacheUtils';
 import {ConfigManager} from './utils/ConfigManager';
+import * as syntax from 'postcss-less';
+import * as postcss from 'postcss';
 
 export class Initializer {
   /**
@@ -26,8 +28,6 @@ export class Initializer {
       }
       if (extName === '.html') {
         let content = fs.readFileSync(filePath, 'UTF-8');
-        // let document: parse5.Document = parse5.parse(content, { scriptingEnabled: false, sourceCodeLocationInfo: true });
-
         var reg = new RegExp('<(\S*?)[^>]*>.*?|<.*? />', "g");
         let strArr = content.match(reg);
         if (strArr) {
@@ -38,8 +38,25 @@ export class Initializer {
       else if (extName === '.ts' || extName === '.js') {
         let content = fs.readFileSync(filePath, 'UTF-8');
         this.mappingFile(content,filePath);
-      } else if (extName === '.es') {
+      } else if (extName === '.es') { 
         this.mappingSameFile(filePath);
+      } else if(extName === '.css' ){
+        let content = fs.readFileSync(filePath, 'UTF-8');
+        try {
+         // let cssObj = CSSOM.parse(content);
+          console.log(filePath);
+         // console.log(cssObj);
+        } catch (error) {
+          console.error(error);
+        }
+       
+      }else if(extName === '.less'){
+        let content = fs.readFileSync(filePath, 'UTF-8');
+        postcss([])
+        .process(content, { syntax: syntax })
+        .then(function (result) {
+          result.content // LESS with transformations
+      });
       }
     });
 
