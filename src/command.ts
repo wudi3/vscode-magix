@@ -6,6 +6,7 @@ export class Command {
   public static COMMAND_JUMP_BACK_AND_FORTH: string = "mx.jumper.backAndForth";
   public static COMMAND_DIAMOND_OPEN_DAILY: string = "mx.diamond.open.daily";
   public static COMMAND_DIAMOND_OPEN_PRE: string = "mx.diamond.open.pre";
+  public static COMMAND_TEST:string = "mx.test";
 }
 
 

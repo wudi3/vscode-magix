@@ -14,6 +14,7 @@ export class FileUtils {
   static getProjectPath(document: vscode.TextDocument | undefined): string {
     if (!document && vscode.window.activeTextEditor) {
       document = vscode.window.activeTextEditor.document;
+      
     }
     if (!document) {
       vscode.window.showErrorMessage('当前激活的编辑器不是文件或者没有文件被打开！');

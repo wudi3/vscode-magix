@@ -30,6 +30,10 @@
       {
         "command": "mx.jumper.backAndForth",
         "title": "MX"
+      },
+      {
+        "command": "mx.test",
+        "title": "MX Test"
       }
     ],
     "keybindings": [

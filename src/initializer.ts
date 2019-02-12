@@ -42,25 +42,15 @@ export class Initializer {
         this.mappingSameFile(filePath);
       } else if(extName === '.css' ){
         let content = fs.readFileSync(filePath, 'UTF-8');
-        try {
-         // let cssObj = CSSOM.parse(content);
-          console.log(filePath);
-         // console.log(cssObj);
-        } catch (error) {
-          console.error(error);
-        }
+       
        
       }else if(extName === '.less'){
         let content = fs.readFileSync(filePath, 'UTF-8');
-        postcss([])
-        .process(content, { syntax: syntax })
-        .then(function (result) {
-          result.content // LESS with transformations
-      });
+       
       }
     });
 
-    console.log('done');
+    
   }
   private mappingFile(content: string, filePath: string){
     try {

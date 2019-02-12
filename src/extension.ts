@@ -4,25 +4,34 @@
 import * as vscode from 'vscode';
 import { Initializer } from './initializer';
 import { Command } from './command';
-import {ToDefinitionCommand} from './command/ToDefinitionCommand';
-import {DiamondCommand} from './command/DiamondCommand';
+import { ToDefinitionCommand } from './command/ToDefinitionCommand';
+import { DiamondCommand } from './command/DiamondCommand';
+import { TestCommand } from './command/TestCommand';
 import { MXDefinitionProvider, MXInnerDefinitionProvider, HtmlDefinitionProvider } from './provider/VSDefinitionProvider';
 import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvider';
-import {ConfigManager} from './utils/ConfigManager';
-import {Logger} from './utils/Logger';
-
+import {VSFoldingRangeProvider} from './provider/VSFoldingRangeProvider';
+import { ConfigManager } from './utils/ConfigManager';
+import { Logger } from './utils/Logger';
+import { Iconfont, FontInfo } from './utils/Iconfont';
 
 export function activate(context: vscode.ExtensionContext) {
-    
-    let startTime:number  = new Date().getTime();
+    let fontInfo: FontInfo = new FontInfo();
+    fontInfo.url = 'https//at.alicdn.com/t/font_313303_krh95v0qkil.svg#iconfont';
+    let iconfont: Iconfont = new Iconfont();
+    iconfont.writeTempFiles(fontInfo);
+
+    let startTime: number = new Date().getTime();
     //初始化期，初始化基本数据
     new Initializer().init().then(() => {
         //注册跳转到定义command
         let command: ToDefinitionCommand = new ToDefinitionCommand();
         command.registerCommand(context);
 
-        let diamondCommand:DiamondCommand = new DiamondCommand();
+        let diamondCommand: DiamondCommand = new DiamondCommand();
         diamondCommand.registerCommand(context);
+
+        let testCommand: TestCommand = new TestCommand();
+        testCommand.registerCommand(context);
 
         //注册es代码跳转command
         const JTS_MODE = [{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }];
@@ -32,18 +41,20 @@ export function activate(context: vscode.ExtensionContext) {
         const HTML_MODE = [{ language: 'html', scheme: 'file' }];
         context.subscriptions.push(vscode.languages.registerDefinitionProvider(HTML_MODE, new HtmlDefinitionProvider()));
         //注册代码提示
-        context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new MXEventCompletionItemProvider(),'=','\'','"'));
-       
+        context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new MXEventCompletionItemProvider(), '=', '\'', '"'));
+
+        context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(HTML_MODE,new VSFoldingRangeProvider()));
+
         initViews();
-        
-        Logger.logActivate(new Date().getTime() - startTime,'');
+
+        Logger.logActivate(new Date().getTime() - startTime, '');
         Logger.log('插件启动成功');
     }).catch((info) => {
-        Logger.logActivate(new Date().getTime() - startTime,info);
+        Logger.logActivate(new Date().getTime() - startTime, info);
         Logger.error(info);
     });
-    
-  
+
+
 
 }
 
@@ -52,23 +63,23 @@ export function deactivate() {
     Logger.logDeactivate();
 }
 
-function initViews(){
+function initViews() {
 
-    let config:any = ConfigManager.read();
+    let config: any = ConfigManager.read();
 
-    let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
-    status.text="Diamond日常";
-    if(config.diamond.daily.appName){
+    let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    status.text = "Diamond日常";
+    if (config.diamond.daily.appName) {
         status.tooltip = 'http://www.baidu.com';
     }
     status.show();
-    status.command=Command.COMMAND_DIAMOND_OPEN_DAILY;
+    status.command = Command.COMMAND_DIAMOND_OPEN_DAILY;
 
-    status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,100);
-    status.text="Diamond预发";
-    if(config.diamond.pre.appName){
+    status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    status.text = "Diamond预发";
+    if (config.diamond.pre.appName) {
         status.tooltip = 'http://www.baidu.com';
     }
     status.show();
-    status.command=Command.COMMAND_DIAMOND_OPEN_PRE;
+    status.command = Command.COMMAND_DIAMOND_OPEN_PRE;
 }
