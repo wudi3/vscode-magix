@@ -22,7 +22,8 @@ export class DiamondCommand {
     }));
   }
   open(diamondConfig: any, url: string, context: vscode.ExtensionContext) {
-
+    //anuary 2019 (version 1.31) 打开浏览器可以使用vs自带方法了
+    //await vscode.env.openExternal(vscode.Uri.parse("https://github.com/Microsoft/vscode/issues/66741"));
     if (diamondConfig.serverId && diamondConfig.appName) {
       opn(url + '?serverId=' + diamondConfig.serverId +
         '&dataId=' + diamondConfig.dataId +

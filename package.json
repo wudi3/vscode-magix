@@ -94,12 +94,13 @@
     "@types/parse5": "^5.0.0",
     "babylon": "^6.18.0",
     "map-lru": "^1.0.2",
+    "postcss": "^7.0.14",
+    "postcss-less": "^3.1.2",
     "pouchdb": "^7.0.0",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
     "vscode": "^1.1.21",
-    "postcss": "^7.0.14",
-    "postcss-less":"^3.1.2"
+    "xml": "^1.0.1"
   },
   "dependencies": {
     "@types/parse5": "^5.0.0",
@@ -108,7 +109,7 @@
     "map-lru": "^1.0.2",
     "opn": "^4.0.2",
     "postcss": "^7.0.14",
-    "postcss-less":"^3.1.2"
+    "postcss-less": "^3.1.2"
   },
   "repository": {
     "type": "git",

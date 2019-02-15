@@ -35,7 +35,7 @@ export class FileUtils {
     }
     workspaceFolders.forEach(folder => {
       if (currentFile.indexOf(folder) === 0) {
-        projectPath = folder;
+        projectPath = path.dirname(folder);
       }
     });
     if (!projectPath) {

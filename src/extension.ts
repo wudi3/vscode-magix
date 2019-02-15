@@ -12,13 +12,10 @@ import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvid
 import {VSFoldingRangeProvider} from './provider/VSFoldingRangeProvider';
 import { ConfigManager } from './utils/ConfigManager';
 import { Logger } from './utils/Logger';
-import { Iconfont, FontInfo } from './utils/Iconfont';
+
 
 export function activate(context: vscode.ExtensionContext) {
-    let fontInfo: FontInfo = new FontInfo();
-    fontInfo.url = 'https//at.alicdn.com/t/font_313303_krh95v0qkil.svg#iconfont';
-    let iconfont: Iconfont = new Iconfont();
-    iconfont.writeTempFiles(fontInfo);
+    
 
     let startTime: number = new Date().getTime();
     //初始化期，初始化基本数据

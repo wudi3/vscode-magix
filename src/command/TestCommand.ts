@@ -1,20 +1,16 @@
 import * as vscode from 'vscode';
 import { Command } from '../command';
+import { Iconfont, FontInfo } from '../utils/Iconfont';
+import * as xml from 'xml';
 
 export class TestCommand {
   registerCommand(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand(Command.COMMAND_TEST, (args) => {
      vscode.window.showInformationMessage('test');
-     let editor:vscode.TextEditor | undefined = vscode.window.activeTextEditor;
-     if(editor){
-      //editor.selection = new vscode.Selection(1, 0, 7, 0);
-      //vscode.commands.executeCommand('editor.fold');
-      //vscode.commands.executeCommand('editor.unfoldRecursively');
-      //vscode.commands.executeCommand('editor.unfoldRecursively');
-      //vscode.commands.executeCommand('editor.unfold');
-      editor.revealRange(new vscode.Range(new vscode.Position(1,0),new vscode.Position(7,0)),vscode.TextEditorRevealType.Default);
-      vscode.commands.executeCommand('editor.action.showReferences');
-     }
+     let fontInfo: FontInfo = new FontInfo();
+     fontInfo.url = 'https://at.alicdn.com/t/font_386526_gh37yvyi89d.svg#iconfont';
+     let iconfont: Iconfont = new Iconfont();
+     iconfont.writeTempFiles(fontInfo);
     
     
      
