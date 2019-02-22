@@ -12,6 +12,7 @@ import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvid
 import {VSFoldingRangeProvider} from './provider/VSFoldingRangeProvider';
 import { ConfigManager } from './utils/ConfigManager';
 import { Logger } from './utils/Logger';
+import { create } from 'domain';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -64,19 +65,18 @@ function initViews() {
 
     let config: any = ConfigManager.read();
 
-    let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    status.text = "Diamond日常";
-    if (config.diamond.daily.appName) {
-        status.tooltip = 'http://www.baidu.com';
-    }
-    status.show();
-    status.command = Command.COMMAND_DIAMOND_OPEN_DAILY;
+    createStatusBar('日常',config.diamond.daily.appName,Command.COMMAND_DIAMOND_OPEN_DAILY);
 
-    status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    status.text = "Diamond预发";
-    if (config.diamond.pre.appName) {
-        status.tooltip = 'http://www.baidu.com';
-    }
+    createStatusBar('预发',config.diamond.pre.appName,Command.COMMAND_DIAMOND_OPEN_PRE);
+
+    createStatusBar('Diamond配置','Diamond配置',Command.COMMAND_DIAMOND_CONFIG);
+
+}
+
+function createStatusBar(text:string,tooltip:string,command:string){
+    let status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    status.text = text;
+    status.tooltip = '';
     status.show();
-    status.command = Command.COMMAND_DIAMOND_OPEN_PRE;
+    status.command = command;
 }

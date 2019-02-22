@@ -34,6 +34,7 @@ export class ConfigManager {
     panel.webview.onDidReceiveMessage((e) => {
       if(e.type === 'save'){
         this.save(e.config);
+        vscode.window.showInformationMessage('Diamond配置保存成功');
       }
     });
   }
