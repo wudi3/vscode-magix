@@ -1,43 +1,67 @@
-# mx-plugin README
+# Magix 辅助开发插件
 
-这是个非常好玩的vscode插件
+## 功能
 
-## Features
+### html模板页与js页跳转
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+通过快捷键`Alt+Tab`、`MAC键+鼠标点击 Magix tmpl属性值`、`右键快捷方式`，支持 html模板页与之相关联的js页跳转:
 
-For example if there is an image subfolder under your extension project workspace:
+<img src="https://img.alicdn.com/tfs/TB1vW0lIgDqK1RjSZSyXXaxEVXa-984-461.gif" alt="js跳转" width="330"/>
 
-\!\[feature X\]\(images/feature-x.png\)
+注意：
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+```javascript
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#13332E",
+    "titleBar.activeBackground": "#19423B",
+    "titleBar.activeForeground": "#F6FBFB"
+  }
+```
 
-## Requirements
+The extension deletes this file and folder each time the VS Code window is closed unless the colors have been modified or unless they contain any other settings.  
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+You can optionally set a single Base Color (see Window Colors settings) by hex code or css color name.  
 
-## Extension Settings
+## Usage with Git
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+To avoid checking `.vscode/settings.json` in to your remote repository without modifying `.gitignore`, you can either:
 
-For example:
+1. **locally:** add `.vscode/settings.json` to your project's `.git/info/exclude` file
 
-This extension contributes the following settings:
+    _or_
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+2.  **globally:** create and use a global `.gitignore_global` file like so:
 
-## Known Issues
+    ```git config --global core.excludesfile ~/.gitignore_global```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Usage
 
-## Release Notes
+Colors do not get overwritten.  This allows you to set custom colors (or a single Base Color).  To switch between light and dark themed colors, you must first delete the current colors from `.vscode/settings.json`.  You can do this manually or by or selecting `remove` in the extension's `Window Colors: Theme` settings and reloading the VS Code window.
 
-Users appreciate release notes as you update your extension.
+<!-- <img src="https://github.com/stuartcrobinson/unique-window-colors/blob/master/img/settings.png?raw=true" alt="drawing" width="500"/> -->
 
-### 1.0.0
+## Notes
 
-Initial release of ...
+Workspaces containing multiple root folders are not currently supported by this extension.  The current behavior for multi-folder workspaces is that the workspace color settings will be set by the first window opened, and can be saved in the workspace's `<workspace-name>.code-workspace` configuration file.
+
+When opening new VSCode windows, you might see the relevant theme colors change as they are updated to the new workspace.  This is normal:
+
+<img src="https://github.com/stuartcrobinson/unique-window-colors/blob/master/img/colorflicker.gif?raw=true" alt="drawing" width="200"/>
+
+## Credits
+
+Hashing and color generation functions adapted from https://www.designedbyaturtle.co.uk/convert-string-to-hexidecimal-colour-with-javascript-vanilla/ by Edd Turtle.
+
+Workspace root folder detection function adapted from https://itnext.io/how-to-make-a-visual-studio-code-extension-77085dce7d82 by Van Huynh.
+
+
+
+<br><br>
+<img style="vertical-align: middle;" src="https://raw.githubusercontent.com/stuartcrobinson/unique-window-colors/master/img/icon_602.png" width="60" />
+
+### 0.0.8
+
+完成哈哈功能
 
 ### 1.0.1
 
@@ -48,7 +72,5 @@ Fixed issue #.
 Added features X, Y, and Z.
 
 -----------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
 
 
