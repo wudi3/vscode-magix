@@ -12,7 +12,7 @@ import { MXEventCompletionItemProvider } from './provider/VSCompletionItemProvid
 import {VSFoldingRangeProvider} from './provider/VSFoldingRangeProvider';
 import { ConfigManager } from './utils/ConfigManager';
 import { Logger } from './utils/Logger';
-import { create } from 'domain';
+
 
 
 export function activate(context: vscode.ExtensionContext) {

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Command } from '../command';
 import { Iconfont, FontInfo } from '../utils/Iconfont';
-import * as xml from 'xml';
+
 
 export class TestCommand {
   registerCommand(context: vscode.ExtensionContext) {

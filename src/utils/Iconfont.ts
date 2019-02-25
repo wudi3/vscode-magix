@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as request from 'request';
+
+const request = require('request');
 
 export class Iconfont{
   s:string = `<?xml version="1.0" standalone="no"?>

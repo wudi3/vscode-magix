@@ -7,10 +7,10 @@ export interface lineInfo {
   range: vscode.Range;
 }
 
-const EMPTY_RANGE = new vscode.Range(
-  new vscode.Position(0, 0),
-  new vscode.Position(0, 1)
-);
+// const EMPTY_RANGE = new vscode.Range(
+//   new vscode.Position(0, 0),
+//   new vscode.Position(0, 1)
+// );
 
 export namespace Lines {
   export function makeLineInfos(
@@ -21,7 +21,9 @@ export namespace Lines {
     for (const range of ranges) {
       const line = textEditor.document.lineAt(range.start.line);
       let lineAndCursor = lineAndCursors.get(line.lineNumber);
-      if (!lineAndCursor) lineAndCursor = { line, range };
+      if (!lineAndCursor){ 
+        lineAndCursor = { line, range };
+      }
 
       lineAndCursors.set(line.lineNumber, lineAndCursor);
     }
@@ -85,11 +87,11 @@ export namespace Lines {
     lineNumber: number,
     stopWhen: (line: vscode.TextLine) => boolean
   ) {
-    const line = document.lineAt(lineNumber);
+    //const line = document.lineAt(lineNumber);
     const documentLength = document.lineCount;
     for (let index = lineNumber + 1; index < documentLength; index++) {
       const nextLine = document.lineAt(index);
-      if (stopWhen(nextLine)) return nextLine;
+      if (stopWhen(nextLine)) {return nextLine;}
     }
     return null;
   }
@@ -99,10 +101,10 @@ export namespace Lines {
     lineNumber: number,
     stopWhen: (line: vscode.TextLine) => boolean
   ) {
-    const line = document.lineAt(lineNumber);
+    //const line = document.lineAt(lineNumber);
     for (let index = lineNumber - 1; index >= 0; index--) {
       const nextLine = document.lineAt(index);
-      if (stopWhen(nextLine)) return nextLine;
+      if (stopWhen(nextLine)) {return nextLine;}
     }
     return null;
   }
@@ -132,7 +134,7 @@ export namespace Lines {
     let previousLine = line;
     for (let index = lineNumber - 1; index >= 0; index--) {
       const nextLine = document.lineAt(index);
-      if (!isInBlock(nextLine)) break;
+      if (!isInBlock(nextLine)){ break;}
       previousLine = nextLine;
     }
     return previousLine;
@@ -150,7 +152,7 @@ export namespace Lines {
       const nextLine = document.lineAt(index);
       if (!nextLine.isEmptyOrWhitespace) {
         const currentSpacing = calculateLineSpacing(nextLine.text, tabSize);
-        if (currentSpacing <= lastSpacing) return nextLine;
+        if (currentSpacing <= lastSpacing){ return nextLine;}
       }
     }
     return null;
@@ -167,7 +169,7 @@ export namespace Lines {
       const line = document.lineAt(index);
       if (!line.isEmptyOrWhitespace) {
         const currentSpacing = calculateLineSpacing(line.text, tabSize);
-        if (currentSpacing < lastSpacing) return line;
+        if (currentSpacing < lastSpacing) {return line;}
       }
     }
     return null;
@@ -198,7 +200,7 @@ export namespace Lines {
     let lineNumbers = Array<number>();
     for (let index = 0; index < document.lineCount; index++) {
       const line = document.lineAt(index);
-      if (line.text.search(text) > -1) lineNumbers.push(line.lineNumber);
+      if (line.text.search(text) > -1) {lineNumbers.push(line.lineNumber);}
     }
     return lineNumbers;
   }
@@ -218,15 +220,18 @@ export namespace Lines {
       lineNumber,
       line => !line.isEmptyOrWhitespace
     );
+    if(!nextLineDown){
+      return null;
+    }
     const childSpacing = calculateLineSpacing(nextLineDown.text, tabSize);
-    if (childSpacing <= parentLineSpacing) return foundLines;
+    if (childSpacing <= parentLineSpacing) {return foundLines};
 
     for (let index = lineNumber + 1; index < documentLength; index++) {
       const nextLine = document.lineAt(index);
       if (!nextLine.isEmptyOrWhitespace) {
         const currentSpacing = calculateLineSpacing(nextLine.text, tabSize);
-        if (currentSpacing <= parentLineSpacing) break;
-        if (currentSpacing == childSpacing) foundLines.push(nextLine);
+        if (currentSpacing <= parentLineSpacing) {break;}
+        if (currentSpacing === childSpacing){ foundLines.push(nextLine);}
       }
     }
     return foundLines;
@@ -252,6 +257,9 @@ export namespace Lines {
 
   export function findAllLinesContainingCurrentWordOrSelection() {
     const textEditor = vscode.window.activeTextEditor;
+    if(!textEditor){
+      return null;
+    }
     const selection = textEditor.selection;
     const regExForFold = makeRegExpToMatchWordUnderCursorOrSelection(
       textEditor.document,
@@ -264,8 +272,8 @@ export namespace Lines {
     document: vscode.TextDocument,
     selection: vscode.Selection
   ) {
-    let range = selection as vscode.Range;
-    if (selection.isEmpty) {
+    let range:any = selection as vscode.Range;
+    if (selection.isEmpty ) {
       range = document.getWordRangeAtPosition(
         new vscode.Position(selection.anchor.line, selection.anchor.character)
       );
@@ -282,14 +290,14 @@ export namespace Lines {
     let nextLine = findNextLineUpSpacedLeft(
       textEditor.document,
       lineNumber,
-      +textEditor.options.tabSize
+      Number(textEditor.options.tabSize)
     );
     while (nextLine) {
       level++;
       nextLine = findNextLineUpSpacedLeft(
         textEditor.document,
         nextLine.lineNumber,
-        +textEditor.options.tabSize
+        Number(textEditor.options.tabSize)
       );
     }
     return level;
@@ -301,10 +309,10 @@ export namespace Lines {
   ): number {
     let spacing = 0;
     for (let index = 0; index < lineText.length; index++) {
-      if (lineText.charAt(index) === " ") spacing++;
+      if (lineText.charAt(index) === " ") {spacing++;}
       else if (lineText.charAt(index) === "\t")
-        spacing += tabSize - spacing % tabSize;
-      else break;
+        {spacing += tabSize - spacing % tabSize;}
+      else{ break;}
     }
     return spacing;
   }
@@ -317,8 +325,8 @@ export namespace Lines {
     let spacing = 0;
     for (let index = 0; index < charIndex; index++) {
       if (lineText.charAt(index) === "\t")
-        spacing += tabSize - spacing % tabSize;
-      else spacing++;
+        {spacing += tabSize - spacing % tabSize;}
+      else {spacing++;}
     }
     return spacing;
   }
@@ -330,10 +338,10 @@ export namespace Lines {
   ): number {
     let spacing = 0;
     for (let index = 0; index <= column; index++) {
-      if (spacing >= column) return index;
+      if (spacing >= column) {return index;}
       if (lineText.charAt(index) === "\t")
-        spacing += tabSize - spacing % tabSize;
-      else spacing++;
+        {spacing += tabSize - spacing % tabSize;}
+      else {spacing++;}
     }
     return spacing;
   }
@@ -348,14 +356,14 @@ export namespace Lines {
     document: vscode.TextDocument,
     selection: vscode.Selection
   ) {
-    if (!selection.isSingleLine) return "";
+    if (!selection.isSingleLine) {return "";}
     let range;
     if (selection.isEmpty) {
       range = document.getWordRangeAtPosition(
         new vscode.Position(selection.anchor.line, selection.anchor.character)
       );
     }
-    if (!range) range = selection as vscode.Range;
+    if (!range) {range = selection as vscode.Range;}
     return document.getText(range);
   }
 
