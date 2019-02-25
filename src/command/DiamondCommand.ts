@@ -13,15 +13,18 @@ export class DiamondCommand {
     context.subscriptions.push(vscode.commands.registerCommand(Command.COMMAND_DIAMOND_OPEN_DAILY, (args) => {
       let config: any = ConfigManager.read();
       let daily = config.diamond.daily;
-      this.open(daily, this.dailyUrl, context);
+      this.openUrl(daily, this.dailyUrl, context);
     }));
     context.subscriptions.push(vscode.commands.registerCommand(Command.COMMAND_DIAMOND_OPEN_PRE, (args) => {
       let config: any = ConfigManager.read();
       let pre = config.diamond.pre;
-      this.open(pre, this.preUrl, context);
+      this.openUrl(pre, this.preUrl, context);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(Command.COMMAND_DIAMOND_CONFIG,(args)=>{
+      ConfigManager.openConfigPanel(context);
     }));
   }
-  open(diamondConfig: any, url: string, context: vscode.ExtensionContext) {
+  openUrl(diamondConfig: any, url: string, context: vscode.ExtensionContext) {
     //anuary 2019 (version 1.31) 打开浏览器可以使用vs自带方法了
     //await vscode.env.openExternal(vscode.Uri.parse("https://github.com/Microsoft/vscode/issues/66741"));
     if (diamondConfig.serverId && diamondConfig.appName) {

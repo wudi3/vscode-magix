@@ -3,7 +3,35 @@
 
 <head>
   <style>
+  * {
+      padding: 0;
+      margin: 0;
+    }
 
+    body {
+      padding: 10px;
+    }
+
+    .form-line {
+      margin: 10px;
+    }
+
+    .form-title {
+      display: inline-block;
+      margin-left: 10px;
+      width: 70px;
+      text-align: right;
+    }
+
+    .form-input {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .save-btn{
+      padding:4px 10px;
+      margin-left:100px;
+    }
+   
   </style>
 </head>
 
@@ -11,35 +39,43 @@
   <h4>Diamond配置</h4>
   <div>
     <h5>日常配置</h5>
-    <div>
-      serverId:<input type="text" id="diamond.daily.serverId">
+    <div class="form-line">
+      <div class="form-title">serverId:</div>
+      <div class="form-input"><input type="text" id="diamond.daily.serverId"></div>
     </div>
-    <div>
-      appName:<input type="text" id="diamond.daily.appName">
+    <div class="form-line">
+      <div class="form-title">appName:</div>
+      <div class="form-input"><input type="text" id="diamond.daily.appName"></div>
     </div>
-    <div>
-      dataId:<input type="text" id="diamond.daily.dataId">
+    <div class="form-line">
+      <div class="form-title">dataId:</div>
+      <div class="form-input"><input type="text" id="diamond.daily.dataId"></div>
     </div>
-    <div>
-        groupId:<input type="text" id="diamond.daily.group">
+    <div class="form-line">
+      <div class="form-title">groupId:</div>
+      <div class="form-input"><input type="text" id="diamond.daily.group"></div>
     </div>
   </div>
   <div>
     <h5>预发配置</h5>
-    <div>
-      serverId:<input type="text" id="diamond.pre.serverId">
+    <div class="form-line">
+      <div class="form-title">serverId:</div>
+      <div class="form-input"><input type="text" id="diamond.pre.serverId"></div>
     </div>
-    <div>
-      appName:<input type="text" id="diamond.pre.appName">
+    <div class="form-line">
+      <div class="form-title">appName:</div>
+      <div class="form-input"><input type="text" id="diamond.pre.appName"></div>
     </div>
-    <div>
-      dataId:<input type="text" id="diamond.pre.dataId">
+    <div class="form-line">
+      <div class="form-title">dataId:</div>
+      <div class="form-input"><input type="text" id="diamond.pre.dataId"></div>
     </div>
-    <div>
-        groupId:<input type="text" id="diamond.pre.group">
+    <div class="form-line">
+      <div class="form-title">groupId:</div>
+      <div class="form-input"><input type="text" id="diamond.pre.group"></div>
     </div>
   </div>
-  <button onclick="save()">保存</button>
+  <button class="save-btn" onclick="save()">保存</button>
   <div id="msg"></div>
 
 </body>

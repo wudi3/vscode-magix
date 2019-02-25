@@ -1,54 +1,74 @@
-# mx-plugin README
+# Magix 辅助开发插件
 
-这是个非常好玩的vscode插件
+## 功能
 
-## Features
+### html模板页与js页跳转
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+通过快捷键`Alt+Tab`、`MAC键+鼠标点击 Magix tmpl属性值`、`右键快捷方式`，支持 html模板页与之相关联的js页跳转:
 
-For example if there is an image subfolder under your extension project workspace:
+`Alt+Tab`
+<img src="images/kjtz.gif" alt="js跳转" width="800"/>
+`右键快捷方式`
+<img src="images/yj.gif" alt="js跳转" width="800"/>
+`MAC键+鼠标点击 Magix tmpl属性值`
+<img src="images/dianji-tiaozhuan.gif" alt="js跳转" width="800"/>
 
-\!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+注意：由于跳转功能是基于 magix3的js/ts写法的语法分析，仅支持下面写法的跳转功能,特殊项目可联系 **@灼日** **@抱血** 添加适配
 
-## Requirements
+```javascript
+  var Magix = require('magix');
+  module.exports = Magix.View.extend(
+    temp:'@index.html',
+    init:function(){},
+    render:function(){}
+  );
+```
+### html mx-前缀函数跳转至定义
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+通过快捷键`MAC键+鼠标点击`，支持 html模板页函数跳转到与之相关联的js定义:
 
-## Extension Settings
+<img src="images/hstz.gif" alt="hstz" width="800"/>
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### html magix mx-事件提示 
 
-For example:
+<img src="images/hsts.gif" alt="hsts" width="800"/>
 
-This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+### Diamond 快速打开
 
-## Known Issues
+<img src="images/Diamond.gif" alt="Diamond" width="800"/>
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### html 模板代码折叠
 
-## Release Notes
+<img src="images/zhedie.gif" alt="Diamond" width="800"/>
 
-Users appreciate release notes as you update your extension.
 
-### 1.0.0
+## 加群有惊喜
 
-Initial release of ...
+<img src="images/qun.jpg" alt="Diamond" width="400"/>
 
-### 1.0.1
 
-Fixed issue #.
+## 版本说明
 
-### 1.1.0
+### 0.0.1
 
-Added features X, Y, and Z.
+html页面与js跳转功能
 
------------------------------------------------------------------------------------------------------------
+### 0.0.2
 
-## Working with Markdown
+函数跳转功能
+
+### 0.0.3
+
+函数自动提示
+
+### 0.0.4
+
+Diamond 快捷功能
+
+### 0.0.5
+
+html 模板语法折叠功能
 
 

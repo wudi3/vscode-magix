@@ -14,7 +14,6 @@ export class FileUtils {
   static getProjectPath(document: vscode.TextDocument | undefined): string {
     if (!document && vscode.window.activeTextEditor) {
       document = vscode.window.activeTextEditor.document;
-      
     }
     if (!document) {
       vscode.window.showErrorMessage('当前激活的编辑器不是文件或者没有文件被打开！');
@@ -26,18 +25,18 @@ export class FileUtils {
     let workspaceFolders = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.map(item => item.uri.path) : [];
     // 由于存在Multi-root工作区，暂时没有特别好的判断方法，先这样粗暴判断
     // 如果发现只有一个根文件夹，读取其子文件夹作为 workspaceFolders
-    if (workspaceFolders.length == 1 && workspaceFolders[0] === vscode.workspace.rootPath) {
-      const rootPath = workspaceFolders[0];
-      var files = fs.readdirSync(rootPath);
-      workspaceFolders = files.filter(name => !/^\./g.test(name)).map(name => path.resolve(rootPath, name));
-      // vscode.workspace.rootPath会不准确，且已过时
-      // return vscode.workspace.rootPath + '/' + this._getProjectName(vscode, document);
-    }
-    workspaceFolders.forEach(folder => {
-      if (currentFile.indexOf(folder) === 0) {
-        projectPath = path.dirname(folder);
+    if (workspaceFolders.length === 1 && workspaceFolders[0] === vscode.workspace.rootPath) {
+      projectPath = vscode.workspace.rootPath;
+    }else{
+      workspaceFolders.forEach(folder => {
+        if (currentFile.indexOf(folder) === 0) {
+          projectPath = path.dirname(folder);
+        }
+      });
+      if(!projectPath){
+        vscode.window.showErrorMessage('当前编辑页面不属于workspace中文件，请打开workspace中文件，然后重启vscode');
       }
-    });
+    }
     if (!projectPath) {
       vscode.window.showErrorMessage('获取工程根路径异常！');
       return '';
