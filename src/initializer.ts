@@ -1,7 +1,7 @@
 import { window, TextEditor,workspace,  FileSystemWatcher, Uri } from 'vscode';
 import { ESFileInfo } from './model/ESFileInfo';
 import { Cache } from './utils/CacheUtils';
-import { ESFileAnalyzer } from './utils/ESFileAnalyzer';
+import { ESFileAnalyzer } from './utils/analyzer/ESFileAnalyzer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as fut from './utils/FileUtils';
@@ -71,6 +71,10 @@ export class Initializer {
       console.error(error);
     }
   }
+  /**
+   * 相同文件名判断 a.html -> a.js 
+   * @param filePath 文件路径 
+   */
   private mappingSameFile(filePath: string){
     let htmlPath: string = path.join(path.dirname(filePath), path.basename(filePath).replace(path.extname(filePath), '.html'));
     HtmlESMappingCache.addMapping(filePath, htmlPath);

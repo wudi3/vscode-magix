@@ -16,7 +16,7 @@ export class MXDefinitionProvider implements vscode.DefinitionProvider {
     if (word === '') {
       word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\.(.*?)\(')));
     }
-    
+
     let text = line.text.replace(/\s+/g, '');
     if (text.indexOf('tmpl:') > -1) {
       let path = workDir + '/' + word.replace(/(^\'*)|(\'*$)/g, '').replace(/(^\"*)|(\"*$)/g, '').replace('@', '');
@@ -29,30 +29,31 @@ export class MXDefinitionProvider implements vscode.DefinitionProvider {
  * magix 内部函数跳转
  */
 export class MXInnerDefinitionProvider implements vscode.DefinitionProvider {
+
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
 
     const fileName = document.fileName;
     //const workDir = path.dirname(fileName);
     // const  word = document.getText(document.getWordRangeAtPosition(position, new RegExp('\.(\w*?)\(')));
     const line = document.lineAt(position);
-    let beforeStr:string = line.text.substring(0,position.character);
-    let afterStr:string = line.text.substring(position.character,line.text.length -1);
-    let startIndex:number = beforeStr.lastIndexOf('.');
-    let endIndex:number = afterStr.indexOf('(');
-    if(startIndex > -1 && endIndex > -1){
-      let fnName:string = beforeStr.substring(startIndex+1,beforeStr.length)+afterStr.substring(0,endIndex);
+    let beforeStr: string = line.text.substring(0, position.character);
+    let afterStr: string = line.text.substring(position.character, line.text.length - 1);
+    let startIndex: number = beforeStr.lastIndexOf('.');
+    let endIndex: number = afterStr.indexOf('(');
+
+    if (startIndex > -1 && endIndex > -1) {
+      let fnName: string = beforeStr.substring(startIndex + 1, beforeStr.length) + afterStr.substring(0, endIndex);
       let position: vscode.Position = ESFileProvider.provideFnPosition(fnName, fileName, document.getText());
-      if(position.line === 0 && position.character === 0)
-      {
+      if (position.line === 0 && position.character === 0) {
         return null;
       }
       return new vscode.Location(document.uri, position);
     }
-    
-
-
   }
 }
+/**
+ * html 页面跳转到定义功能
+ */
 export class HtmlDefinitionProvider implements vscode.DefinitionProvider {
 
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
@@ -68,7 +69,8 @@ export class HtmlDefinitionProvider implements vscode.DefinitionProvider {
           let mxMethod = mx[0].replace('mx-', '');
           let userMethod = word.replace(/mx-[a-z]+\s*=\s*\'|mx-[a-z]+\s*=\s*\"/, '');
           userMethod = userMethod.replace(/(\(.*?\)|\s*)(\'|\")/, '');
-          let fnName: Array<string> = [userMethod, userMethod + '<' + mxMethod + '>'];
+          let fnName: Array<string> = [userMethod, userMethod + '<' + mxMethod + '>',mxMethod + '.' + userMethod];
+          //获取 html 对应的 es 文件地址
           let esFilePath: any = HtmlESMappingCache.getEsFilePath(fileName);
           if (esFilePath) {
             let position: vscode.Position = ESFileProvider.provideFnPosition(fnName, esFilePath, '');

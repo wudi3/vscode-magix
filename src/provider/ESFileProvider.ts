@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Cache } from '../utils/CacheUtils';
 import { ESFileInfo } from '../model/ESFileInfo';
-import { ESFileAnalyzer } from '../utils/ESFileAnalyzer';
+import { ESFileAnalyzer } from '../utils/analyzer/ESFileAnalyzer';
 import * as fs from 'fs';
 import { FnInfo } from '../model/FnInfo';
 
@@ -24,30 +24,43 @@ export class ESFileProvider {
     }
   }
 
-  public static provideFnPosition(fnName: string|Array<string>, filePath: string, content: string): vscode.Position {
-    //先找到es文件信息
+  public static provideFnPosition(fnName: string | Array<string>, filePath: string, content: string): vscode.Position {
+
     let fileInfo: ESFileInfo = this.provideFileInfo(filePath, content);
     if (!fileInfo) {
       return new vscode.Position(0, 0);
     }
     let fnInfo: FnInfo | undefined;
-    if(fnName instanceof Array){
+    if (fnName instanceof Array) {
       let canBreak = false;
-      let l:number = fileInfo.functions.length;
+      let l: number = fileInfo.functions.length;
       for (let i = 0; i < l; i++) {
-        let name = fileInfo.functions[i].fnName;
+        let storedFn = fileInfo.functions[i];
+        let storedFnName = storedFn.fnName;
+        let storedMxFnName = storedFn.mxFnName;
         for (let j = 0; j < fnName.length; j++) {
-          if (name === fnName[j]) {
-            fnInfo = fileInfo.functions[i];
-            canBreak = true;
-            break;
+          let searchName = fnName[j];
+          if (searchName.indexOf('.') > -1) {
+            let tempArr = searchName.split('.');
+            let mxFnName = tempArr[0];
+            if (mxFnName === storedMxFnName && searchName === storedFnName) {
+              fnInfo = storedFn;
+              canBreak = true;
+              break;
+            }
+          } else {
+            if (storedFnName === searchName) {
+              fnInfo = storedFn;
+              canBreak = true;
+              break;
+            }
           }
         }
         if (canBreak) {
           break;
         }
       }
-    }else{
+    } else {
       fnInfo = fileInfo.functions.find(fn => {
         return fn.fnName === fnName;
       });

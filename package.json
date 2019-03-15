@@ -14,7 +14,8 @@
     "onCommand:mx.plugin",
     "onLanguage:html",
     "onLanguage:javascript",
-    "onLanguage:typescript"
+    "onLanguage:typescript",
+    "onLanguage:es"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -79,7 +80,14 @@
           "name": "插件设置"
         }
       ]
-    }
+    },
+    "languages": [{
+      "id":"es",
+      "aliases": ["es","ES"],
+      "extensions": [
+        ".es"
+      ]
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
