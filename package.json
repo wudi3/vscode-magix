@@ -139,10 +139,7 @@
     "map-lru": "^1.0.2",
     "opn": "^4.0.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.alibaba-inc.com:fuyingjun/mx-plugin.git"
-  },
+  "repository": "https://github.com/thx/vscode-magix",
   "author": "",
   "license": "ISC"
 }
