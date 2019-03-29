@@ -81,13 +81,36 @@
         }
       ]
     },
-    "languages": [{
-      "id":"es",
-      "aliases": ["es","ES"],
-      "extensions": [
-        ".es"
-      ]
-    }]
+    "grammars": [
+      {
+        "language": "handlebars",
+        "scopeName": "text.html.mxtpl",
+        "path": "./syntaxes/mxtpl.tmLanguage.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "es",
+        "aliases": [
+          "es",
+          "ES"
+        ],
+        "extensions": [
+          ".es"
+        ]
+      },
+      {
+        "id": "handlebars",
+        "aliases": [
+          "mxtpl",
+          "handlebars"
+        ],
+        "extensions": [
+          ".tpl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

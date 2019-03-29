@@ -2,6 +2,16 @@
 
 ## 功能
 
+### 新增 magix3 模板语法高亮功能！
+
+给 handlebars 实现新的 grammar 实现，自动支持 .tpl .html 扩展名的着色，如果你的扩展名不同，请在 配置中将你的扩展名指派给 handlebars
+
+```javascript
+"files.associations": {
+        "*.xxx": "handlebars"
+},
+```
+
 ### html模板页与js页跳转
 
 通过快捷键`Alt+Tab`、`MAC键+鼠标点击 Magix tmpl属性值`、`右键快捷方式`，支持 html模板页与之相关联的js页跳转:
