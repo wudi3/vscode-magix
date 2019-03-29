@@ -106,7 +106,8 @@
           "handlebars"
         ],
         "extensions": [
-          ".tpl"
+          ".tpl",
+          ".html"
         ],
         "configuration": "./language-configuration.json"
       }
