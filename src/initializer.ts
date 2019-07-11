@@ -40,11 +40,11 @@ export class Initializer {
       } else if (extName === '.es') { 
         this.mappingSameFile(filePath);
       } else if(extName === '.css' ){
-        //let content = fs.readFileSync(filePath, 'UTF-8');
+        
        
        
       }else if(extName === '.less'){
-        //let content = fs.readFileSync(filePath, 'UTF-8');
+       
        
       }
     });
