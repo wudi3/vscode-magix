@@ -4,7 +4,6 @@ const request = require('request');
 import * as fs from 'fs';
 import * as path from 'path';
 import * as csstree from 'css-tree';
-import { CompletionItem } from 'vscode';
 
 export interface IconfontData {
   code: string;
